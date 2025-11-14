@@ -1,4 +1,4 @@
-name: Auto GYN-IGU 150d <=500
+name: Auto IGU-GYN 150d <=500
 
 on:
   schedule:
@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  auto-gyn-igu:
+  auto-igu-gyn:
     runs-on: ubuntu-latest
 
     steps:
@@ -35,12 +35,12 @@ jobs:
       - name: Install Playwright Chromium
         run: npx -y playwright@1.56.1 install --with-deps chromium
 
-      # 1) CAPTURA VAIDEPROMO GYN -> IGU PARA 150 DIAS
-      - name: Capture Vaidepromo GYN-IGU (150 dias)
+      # 1) CAPTURA VAIDEPROMO IGU -> GYN PARA 150 DIAS
+      - name: Capture Vaidepromo IGU-GYN (150 dias)
         shell: bash
         env:
-          ORIGIN: GYN
-          DEST: IGU
+          ORIGIN: IGU
+          DEST: GYN
         run: |
           set -e
           START=$(TZ=America/Sao_Paulo date +%F)
@@ -60,11 +60,11 @@ jobs:
             fi
           done
 
-      # 2) GERA SNAPSHOT ÚNICO EM public/YYYY-MM-DD_GYN-IGU.csv
-      - name: Gerar snapshot único em public/YYYY-MM-DD_GYN-IGU.csv
+      # 2) GERA SNAPSHOT ÚNICO EM public/YYYY-MM-DD_IGU-GYN.csv
+      - name: Gerar snapshot único em public/YYYY-MM-DD_IGU-GYN.csv
         env:
-          ROUTE_FROM: GYN
-          ROUTE_TO:   IGU
+          ROUTE_FROM: IGU
+          ROUTE_TO:   GYN
           TZ: America/Sao_Paulo
         run: |
           node - <<'NODE'
@@ -146,8 +146,8 @@ jobs:
             return `${bag.year}-${bag.month}-${bag.day}`;
           }
 
-          const FROM = (process.env.ROUTE_FROM||'GYN').toUpperCase().trim().replace(/\s+/g,'');
-          const TO   = (process.env.ROUTE_TO||'IGU').toUpperCase().trim().replace(/\s+/g,'');
+          const FROM = (process.env.ROUTE_FROM||'IGU').toUpperCase().trim().replace(/\s+/g,'');
+          const TO   = (process.env.ROUTE_TO||'GYN').toUpperCase().trim().replace(/\s+/g,'');
           const ROUTE = `${FROM}-${TO}`;
 
           const all = listResultsFiles('data');
@@ -240,6 +240,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "Sem mudanças para commitar."
           else
-            git commit -m "auto: GYN-IGU 150d snapshot <=500"
+            git commit -m "auto: IGU-GYN 150d snapshot <=500"
             git push || echo "Não foi possível dar push (verifique permissões do token)"
           fi
